@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SentinelURL{% endblock %} · SentinelURL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">S</span><span>Sentinel<span class="brand-light">URL</span><small>THREAT INTELLIGENCE</small></span></a>
+    {% if current_user %}
+    <div class="nav-label">WORKSPACE</div>
+    <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}"><span>▦</span> Overview</a>
+    <a class="nav-link {% if request.endpoint == 'history' %}active{% endif %}" href="{{ url_for('history') }}"><span>◷</span> Scan history</a>
+    <div class="nav-label">ACCOUNT</div>
+    <a class="nav-link {% if request.endpoint == 'profile' %}active{% endif %}" href="{{ url_for('profile') }}"><span>◉</span> Profile</a>
+    <div class="sidebar-bottom">
+      <div class="system-status"><span class="status-dot"></span><span><b>Local analysis engine</b><small>Heuristic mode · Online</small></span></div>
+      <form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="nav-link logout-btn" type="submit"><span>↪</span> Sign out</button></form>
+    </div>
+    {% else %}
+    <div class="sidebar-promo"><div class="promo-icon">⌁</div><h3>Stay ahead of threats.</h3><p>Inspect suspicious links before you trust them.</p><a class="btn btn-primary btn-block" href="{{ url_for('register') }}">Create free account</a></div>
+    <div class="sidebar-bottom"><div class="system-status"><span class="status-dot"></span><span><b>Privacy first</b><small>URLs are not opened by this demo</small></span></div></div>
+    {% endif %}
+  </aside>
+  <main class="main-area">
+    <header class="topbar"><div class="breadcrumb">Security tools <span>/</span> <b>{% block section %}URL Intelligence{% endblock %}</b></div>
+      <div class="top-actions"><span class="top-badge"><i></i> SYSTEM READY</span>
+      {% if current_user %}<a class="avatar" href="{{ url_for('profile') }}">{{ current_user.username[:1]|upper }}</a>{% else %}<a class="top-login" href="{{ url_for('login') }}">Sign in ↗</a>{% endif %}</div>
+    </header>
+    <section class="page-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+      {% block content %}{% endblock %}
+      <footer class="footer"><span>© 2026 SentinelURL · Security analysis workspace</span><span>Built for defensive awareness <b>●</b></span></footer>
+    </section>
+  </main>
+</div>
+</body></html>
